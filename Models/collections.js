@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const dataSchema = new mongoose.Schema({
-    registration_id: {type:Number, required: [true, 'Registration id must be provided']},
+    registration_id: {type:Number, unique: true, required: [true, 'Registration id must be provided']},
     client_username: {type:String, unique: true, uniqueCaseInsensitive: true, required: [true, 'Username must be provided']},
     ip: {type:String},
     status: {type:Number},

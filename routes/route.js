@@ -25,7 +25,7 @@ router.get('/:ownership', checkOwnership, (req, res) => {
   const Model = mongoose.model(req.collectionName, dataSchema);
   Model.find().then((data) => {
     if (!data.length) {
-      res.status(400).json(error("Error in data entry", res.statusCode))
+      res.status(400).json(error("Empty database", res.statusCode))
     } else {
       res.status(200).json(success("OK", data, res.statusCode))
     }
@@ -39,12 +39,12 @@ router.get('/:ownership/:username', checkOwnership, async (req, res) => {
   try {
     const user = await Model.findOne({ client_username: req.params.username })
     if (!user) {
-      res.status(404).json(error("User do not exist", res.statusCode))
+      res.status(404).json(error("User with this username do not exist", res.statusCode))
     }
     else {
       const doc = await Model.findOne({ client_username: req.params.username })
       if (doc == null) {
-        res.status(500).json(error("User not found", res.statusCode))
+        res.status(500).json(error("No user found with username: $user", res.statusCode))
       }
       else {
         res.json(success("OK", { data: doc }, 200))
@@ -70,9 +70,9 @@ router.post('/:ownership', checkOwnership, (req, res) => {
   });
   data.save((err, doc) => {
     if (err) {
-      res.status(422).json(error("User with this username already exist", res.statusCode))
+      res.status(422).json(error("registration_id or username duplication ", res.statusCode))
     } else {
-      res.status(200).json(success("OK", { data: doc }, res.statusCode))
+      res.status(200).json(success("OK", `${req.body.client_username} is registered.`, res.statusCode))
     }
   })
 });
@@ -87,7 +87,7 @@ router.delete('/:ownership/:username', checkOwnership, async (req, res) => {
       res.status(404).json(error("User not found", res.statusCode))
     } else {
       await Model.deleteOne({ client_username: req.params.username })
-      res.json(success("OK", req.params.username, 200))
+      res.json(success("OK", `${req.params.username} has been deleted.`, 200))
     }
   } catch (err) {
     res.status(500).json(error("Internal Server Error", res.statusCode))
@@ -114,11 +114,11 @@ router.put('/:ownership/:username', checkOwnership, async (req, res) => {
       res.status(404).json(error("User not found", res.statusCode))
     } else {
       await Model.updateMany({ client_username: req.params.username }, { $set: data })
-      res.json(success("OK", req.params.username, 200))
+      res.json(success("OK", `${req.params.username} is updated.`, 200))
     }
   } catch (err) {
-    console.log(req.params.username)
-    res.status(500).json(error("Internal Server Error", res.statusCode))
+    res.status(422).json(error("registration_id or username duplication ", res.statusCode))
+
   }
 })
 
