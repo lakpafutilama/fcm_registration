@@ -1,6 +1,6 @@
-FROM node:18
+FROM node:alpine
 
-WORKDIR C:\Users\DELL\Desktop\external_fcm_registration
+WORKDIR /app
 
 COPY package*.json ./
 
@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["node", "app.js"]
+CMD ["npm", "run", "dev"]

@@ -1,0 +1,28 @@
+version: "3"
+services:
+  app:
+    container_name: fcm-external-docker
+    restart: always
+    build: .
+    ports:
+      - "3000:3000"
+    networks:
+      - fcm_network
+  mongo:
+    container_name: mongodb
+    image: mongo:latest
+    volumes:
+      - /mongodbdata:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      MONGO_INITDB_DATABASE: database
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+    networks:
+      - fcm_network
+
+networks:
+  fcm_network:
+    external: true
