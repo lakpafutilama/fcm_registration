@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const dataSchema = require('../models/dataModel');
+const dataSchema = require('../Models/dataModel');
 const { success, error } = require("../response-api/responseApi");
 
 
