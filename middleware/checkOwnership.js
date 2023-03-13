@@ -2,7 +2,7 @@ const {error} = require("../response-api/responseApi");
 
 require("dotenv").config();
 
-ownerShipArray = process.env.ownerShipArray;
+const ownerShipArray = process.env.ownerShipArray;
 
 function checkOwnership(req, res, next) {
   const collectionName = req.params.ownership;
@@ -14,4 +14,4 @@ function checkOwnership(req, res, next) {
   }
 }
 
-module.expotrs = {checkOwnership}
+module.exports = {checkOwnership}
