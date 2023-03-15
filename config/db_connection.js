@@ -8,7 +8,6 @@ const uri = process.env.URI;
 const dbConnection = mongoose.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    family: 4,
 },(err)=>{
     if(err){  
         console.log("No connection: error: "+err);
