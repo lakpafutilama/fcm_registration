@@ -86,13 +86,12 @@ const updateUser = async (req, res) => {
     try {
         const user = await Model.findOne({ client_username: req.params.username })
         if (!user) {
-            data.save((err, doc) => {
-                if (err) {
-                    res.status(422).json(error("Duplication: registration_id or username already in use", res.statusCode))
-                } else {
-                    res.status(200).json(success("OK", `New user ${req.body.client_username} is registered.`, res.statusCode))
-                }
-            })
+            try {
+                const user = await Model.create(data);
+                res.json(success("OK", `New user ${req.body.client_username} is registered.`, res.statusCode));
+              } catch (err) {
+                res.status(422).json(error("Duplication: registration_id or username already in use", res.statusCode));
+              }
         } else {
             await Model.updateMany({ client_username: req.params.username }, { $set: data })
             res.json(success("OK", `${req.params.username} is updated.`, 200))
