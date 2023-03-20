@@ -39,26 +39,15 @@ const getIndUser = async (req, res) => {
 }
 
 //Post an new user
-const postUser = (req, res) => {
+const postUser = async (req, res) => {
     const Model = mongoose.model(req.collectionName, dataSchema);
-    const data = new Model({
-        REGISTRATION_ID: req.body.REGISTRATION_ID,
-        CLIENT_USERNAME: req.body.CLIENT_USERNAME,
-        DEVICE_OS: req.body.DEVICE_OS,
-        DEVICE_NAME: req.body.DEVICE_NAME,
-        APP_VERSION: req.body.APP_VERSION,
-        APP_VERSION_CODE: req.body.APP_VERSION_CODE,
-        LOGGED_CELL_NUMBER: req.body.LOGGED_CELL_NUMBER,
-        ENABLE: req.body.ENABLE,
-        BLACKLIST: req.body.BLACKLIST
-    });
-    data.save((err, doc) => {
-        if (err) {
-            res.status(422).json(error("registration_id or username duplication ", res.statusCode))
-        } else {
-            res.status(200).json(success("OK", `${req.body.CLIENT_USERNAME} is registered.`, res.statusCode))
-        }
-    })
+    try{
+        await Model.create(req.body)
+        res.status(200).json(success("OK", `${req.body.CLIENT_USERNAME} is registered.`, res.statusCode))
+    }
+    catch(err){
+        res.status(422).json(error("registration_id or username duplication ", res.statusCode))
+    }
 }
 
 //Delete an user
@@ -80,28 +69,17 @@ const deleteUser = async (req, res) => {
 //Update a user's data or create new user
 const updateUser = async (req, res) => {
     const Model = mongoose.model(req.collectionName, dataSchema);
-    const data = {
-        REGISTRATION_ID: req.body.REGISTRATION_ID,
-        CLIENT_USERNAME: req.body.CLIENT_USERNAME,
-        DEVICE_OS: req.body.DEVICE_OS,
-        DEVICE_NAME: req.body.DEVICE_NAME,
-        APP_VERSION: req.body.APP_VERSION,
-        APP_VERSION_CODE: req.body.APP_VERSION_CODE,
-        LOGGED_CELL_NUMBER: req.body.LOGGED_CELL_NUMBER,
-        ENABLE: req.body.ENABLE,
-        BLACKLIST: req.body.BLACKLIST
-    };
     try {
         const user = await Model.findOne({ CLIENT_USERNAME: req.params.username })
         if (!user) {
             try {
-                await Model.create(data);
+                await Model.create(req.body);
                 res.json(success("OK", `New user ${req.body.CLIENT_USERNAME} is registered.`, res.statusCode));
             } catch (err) {
                 res.status(422).json(error("Duplication: registration_id or username already in use", res.statusCode));
             }
         } else {
-            await Model.updateMany({ CLIENT_USERNAME: req.params.username }, { $set: data })
+            await Model.updateMany({ CLIENT_USERNAME: req.params.username }, { $set: req.body})
             res.json(success("OK", `${req.params.username} is updated.`, 200))
         }
     } catch (err) {
