@@ -184,6 +184,6 @@ external fcm registration
 
 ### Developer: Lakpa Futi Lama
 
-### Contact: lakpa.lama@worldlink.com.np
+### Contact: lakpa.lama44333@gmail.com
 
 ### Thank You
