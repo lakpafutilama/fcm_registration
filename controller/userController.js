@@ -93,19 +93,8 @@ const postUsers = async (req, res) => {
     let countS = 0;
     let countF = 0;
     for (const item of jsonData) {
-        const data = new Model({
-            REGISTRATION_ID: item.REGISTRATION_ID,
-            CLIENT_USERNAME: item.CLIENT_USERNAME,
-            DEVICE_OS: item.DEVICE_OS,
-            DEVICE_NAME: item.DEVICE_NAME,
-            APP_VERSION: item.APP_VERSION,
-            APP_VERSION_CODE: item.APP_VERSION_CODE,
-            LOGGED_CELL_NUMBER: item.LOGGED_CELL_NUMBER,
-            ENABLE: item.ENABLE,
-            BLACKLIST: item.BLACKLIST
-        });
         try {
-            await data.save();
+            await Model.create(item)
             countS++;
         } catch (err) {
             countF++;
