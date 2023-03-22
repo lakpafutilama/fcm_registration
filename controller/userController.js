@@ -20,20 +20,16 @@ const getAllUsers = (req, res) => {
 const getIndUser = async (req, res) => {
     const Model = mongoose.model(req.collectionName, dataSchema);
     try {
-        const user = await Model.findOne({ CLIENT_USERNAME: req.params.username })
-        if (!user) {
-            res.status(404).json(error("User with this username do not exist", res.statusCode))
+        const filterReq = req.query.filter
+        const user = await Model.find(filterReq);
+        if (user.length == 0) {
+            res.status(404).json(error("Not found", res.statusCode))
         }
         else {
-            const doc = await Model.findOne({ CLIENT_USERNAME: req.params.username })
-            if (doc == null) {
-                res.status(500).json(error(`No user found with username: ${req.params.username}`, res.statusCode))
-            }
-            else {
-                res.json(success("OK", { data: doc }, 200))
-            }
+            res.json(success("OK", user, 200))
         }
-    } catch (err) {
+    }
+    catch (err) {
         res.status(500).json(error("Internal Server Error", res.statusCode))
     }
 }
@@ -41,12 +37,12 @@ const getIndUser = async (req, res) => {
 //Post an new user
 const postUser = async (req, res) => {
     const Model = mongoose.model(req.collectionName, dataSchema);
-    try{
+    try {
         await Model.create(req.body)
-        res.status(200).json(success("OK", `${req.body.CLIENT_USERNAME} is registered.`, res.statusCode))
+        res.status(200).json(success("OK", `${req.body.client_username} is registered.`, res.statusCode))
     }
-    catch(err){
-        res.status(422).json(error("registration_id or username duplication ", res.statusCode))
+    catch (err) {
+        res.status(422).json(error("Username mismatch", res.statusCode))
     }
 }
 
@@ -54,11 +50,11 @@ const postUser = async (req, res) => {
 const deleteUser = async (req, res) => {
     const Model = mongoose.model(req.collectionName, dataSchema);
     try {
-        const user = await Model.findOne({ CLIENT_USERNAME: req.params.username })
+        const user = await Model.findOne({ client_username: req.params.username })
         if (!user) {
             res.status(404).json(error("User not found", res.statusCode))
         } else {
-            await Model.deleteOne({ CLIENT_USERNAME: req.params.username })
+            await Model.deleteOne({ client_username: req.params.username })
             res.json(success("OK", `${req.params.username} is deleted.`, 200))
         }
     } catch (err) {
@@ -70,20 +66,20 @@ const deleteUser = async (req, res) => {
 const updateUser = async (req, res) => {
     const Model = mongoose.model(req.collectionName, dataSchema);
     try {
-        const user = await Model.findOne({ CLIENT_USERNAME: req.params.username })
+        const user = await Model.findOne({ client_username: req.params.username })
         if (!user) {
             try {
                 await Model.create(req.body);
-                res.json(success("OK", `New user ${req.body.CLIENT_USERNAME} is registered.`, res.statusCode));
+                res.json(success("OK", `New user ${req.body.client_username} is registered`, res.statusCode));
             } catch (err) {
-                res.status(422).json(error("Duplication: registration_id or username already in use", res.statusCode));
+                res.status(422).json(error("Username mismatch", res.statusCode));
             }
         } else {
-            await Model.updateMany({ CLIENT_USERNAME: req.params.username }, { $set: req.body})
-            res.json(success("OK", `${req.params.username} is updated.`, 200))
+            await Model.updateMany({ client_username: req.params.username }, { $set: req.body })
+            res.json(success("OK", `${req.params.username} is updated`, 200))
         }
     } catch (err) {
-        res.status(422).json(error("registration_id or username duplication ", res.statusCode))
+        res.status(422).json(error("Username mismatch", res.statusCode))
     }
 }
 
@@ -92,14 +88,7 @@ const postUsers = async (req, res) => {
     const Model = mongoose.model(req.collectionName, dataSchema);
     let countS = 0;
     let countF = 0;
-    for (const item of jsonData) {
-        try {
-            await Model.create(item)
-            countS++;
-        } catch (err) {
-            countF++;
-        }
-    };
+    Model.insertMany(jsonData);
     res.status(200).json(success("OK", `Success: ${countS} and Failure: ${countF}`, res.statusCode));
 }
 

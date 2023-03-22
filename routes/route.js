@@ -7,7 +7,7 @@ const {checkOwnership} = require("../middleware/checkOwnership")
 router.get('/:ownership', checkOwnership, getAllUsers )
 
 //Get data by username
-router.get('/:ownership/:username', checkOwnership, getIndUser);
+router.get('/:ownership/filter', checkOwnership, getIndUser);
 
 //post data
 router.post('/:ownership', checkOwnership, postUser);
