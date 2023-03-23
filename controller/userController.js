@@ -16,7 +16,7 @@ const getUser = async (req, res) => {
       res.json(success("OK", user, 200));
     }
   } catch (err) {
-    res.status(500).json(error("Cannot get", res.statusCode));
+    res.status(500).json(error("Internal Server Error", res.statusCode));
   }
 };
 
@@ -30,7 +30,7 @@ const postUser = async (req, res) => {
       .json(
         success(
           "OK",
-          `${req.body.client_username} is registered.`,
+          `${req.body.client_username} is registered`,
           res.statusCode
         )
       );
@@ -88,14 +88,8 @@ const updateUser = async (req, res) => {
 //Post multiple users
 const postUsers = async (req, res) => {
   const Model = mongoose.model(req.collectionName, dataSchema);
-  let countS = 0;
-  let countF = 0;
   Model.insertMany(jsonData);
-  res
-    .status(200)
-    .json(
-      success("OK", `Success: ${countS} and Failure: ${countF}`, res.statusCode)
-    );
+  res.status(200).json(success("OK", "Success", res.statusCode));
 };
 
 module.exports = { getUser, postUser, deleteUser, updateUser, postUsers };

@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const dataSchema = new mongoose.Schema(
   {
     registration_id: { type: String },
-    client_username: { type: String, unique: true, required: true },
+    // client_username: { type: String, unique: true, required: true },
+    client_username: { type: String },
     device_os: { type: String },
     device_name: { type: String },
     app_version: { type: String },
