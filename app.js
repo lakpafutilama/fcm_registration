@@ -1,22 +1,21 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
+
+const { dbConnection } = require("./config/db_connection");
+const app = express();
+const route = require("./routes/route.js");
 
 require("dotenv").config();
 
-const {dbConnection} = require('./config/db_connection');
-const app = express();
-const route = require('./routes/route.js')
-
 const port = process.env.PORT;
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cors());
 
-dbConnection
+dbConnection;
 
-app.use('/external/fcm/registration/', route);
+app.use("/external/fcm/registration/", route);
 
 app.listen(port, () => {
-    console.log(`server is started in port ${port}`);
+  console.log(`server is started in port ${port}`);
 });

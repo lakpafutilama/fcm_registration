@@ -11,7 +11,7 @@ const getUser = async (req, res) => {
     const filterReq = req.query.filter;
     const user = await Model.find(filterReq);
     if (user.length == 0) {
-      res.status(404).json(error("No data found", res.statusCode));
+      res.status(404).json(error("No data in database", res.statusCode));
     } else {
       res.json(success("OK", user, 200));
     }
