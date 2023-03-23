@@ -18,5 +18,5 @@ dbConnection
 app.use('/external/fcm/registration/', route);
 
 app.listen(port, () => {
-    console.log('server is started in port 3000');
+    console.log(`server is started in port ${port}`);
 });
