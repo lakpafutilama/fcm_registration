@@ -6,22 +6,25 @@ const {
   updateUser,
   postUsers,
   getUser,
+  getAllUser,
 } = require("../controller/userController");
-const { checkOwnership } = require("../middleware/checkOwnership");
+
+//Get all data
+router.get("/all", getAllUser);
 
 //Get data
-router.get("/:ownership", checkOwnership, getUser);
+router.get("/", getUser);
 
 //post data
-router.post("/:ownership", checkOwnership, postUser);
+router.post("/", postUser);
 
 //post json data
-router.post("/:ownership/post", checkOwnership, postUsers);
+router.post("/post", postUsers);
 
 //delete by username
-router.delete("/:ownership/:username", checkOwnership, deleteUser);
+router.delete("/:username", deleteUser);
 
 //update by username
-router.put("/:ownership/:username", checkOwnership, updateUser);
+router.put("/:username", updateUser);
 
 module.exports = router;

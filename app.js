@@ -4,6 +4,7 @@ const cors = require("cors");
 const { dbConnection } = require("./config/db_connection");
 const app = express();
 const route = require("./routes/route.js");
+const { checkOwnership } = require("./middleware/checkOwnership");
 
 require("dotenv").config();
 
@@ -14,7 +15,7 @@ app.use(cors());
 
 dbConnection;
 
-app.use("/external/fcm/registration/", route);
+app.use("/external/fcm/registration/:ownership", checkOwnership, route);
 
 app.listen(port, () => {
   console.log(`server is started in port ${port}`);

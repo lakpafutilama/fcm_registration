@@ -4,12 +4,23 @@ const { success, error } = require("../response-api/responseApi");
 
 const jsonData = require("../resources/dummy_data");
 
-//Get an user's data
-const getUser = async (req, res) => {
+const schemaData = [
+  "registration_id",
+  "client_username",
+  "device_os",
+  "device_name",
+  "app_version",
+  "app_version_code",
+  "logged_cell_number",
+  "enable",
+  "blacklist",
+];
+
+//Get all user's data
+const getAllUser = async (req, res) => {
   const Model = mongoose.model(req.collectionName, dataSchema);
   try {
-    const filterReq = req.query.filter;
-    const user = await Model.find(filterReq);
+    const user = await Model.find();
     if (user.length == 0) {
       res.status(404).json(error("No data in database", res.statusCode));
     } else {
@@ -17,6 +28,28 @@ const getUser = async (req, res) => {
     }
   } catch (err) {
     res.status(500).json(error("Internal Server Error", res.statusCode));
+  }
+};
+
+//Get filtered user's data
+const getUser = async (req, res) => {
+  const Model = mongoose.model(req.collectionName, dataSchema);
+  try {
+    const filterReq = req.query.filter;
+    let keys = Object.keys(filterReq);
+    console.log(keys[0]);
+    if (schemaData.includes(keys[0])) {
+      const Users = await Model.find(filterReq);
+      if (Users.length == 0) {
+        res.status(404).json(error("Not found", res.statusCode));
+      } else {
+        res.json(success("OK", Users, 200));
+      }
+    } else {
+      res.status(404).json(error("Wrong parameter", res.statusCode));
+    }
+  } catch (err) {
+    res.status(500).json(error("Cannot get", res.statusCode));
   }
 };
 
@@ -92,4 +125,11 @@ const postUsers = async (req, res) => {
   res.status(200).json(success("OK", "Success", res.statusCode));
 };
 
-module.exports = { getUser, postUser, deleteUser, updateUser, postUsers };
+module.exports = {
+  getAllUser,
+  getUser,
+  postUser,
+  deleteUser,
+  updateUser,
+  postUsers,
+};
