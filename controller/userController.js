@@ -37,16 +37,16 @@ const getUser = async (req, res) => {
   try {
     const filterReq = req.query.filter;
     let keys = Object.keys(filterReq);
-    console.log(keys[0]);
-    if (schemaData.includes(keys[0])) {
+    const invalidKeys = keys.filter((key) => !schemaData.includes(key));
+    if (invalidKeys.length > 0) {
+      res.status(400).json(error("Wrong parameter", res.statusCode));
+    } else {
       const Users = await Model.find(filterReq);
       if (Users.length == 0) {
         res.status(404).json(error("Not found", res.statusCode));
       } else {
         res.json(success("OK", Users, 200));
       }
-    } else {
-      res.status(404).json(error("Wrong parameter", res.statusCode));
     }
   } catch (err) {
     res.status(500).json(error("Cannot get", res.statusCode));
